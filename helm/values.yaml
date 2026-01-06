@@ -1,0 +1,66 @@
+postgres:
+  name: mypg
+  namespace: zalando-db
+  teamId: devops
+
+  image: ghcr.io/zalando/spilo-17:4.0-p2
+  instances: 2
+  volumeSize: 1Gi
+
+  users:
+    app_user:
+      - superuser
+      - createdb
+
+  databases:
+    appdb: app_user
+
+  version: "17"
+
+pgbouncer:
+  enabled: true
+
+backup:
+  enabled: true
+  logicalSchedule: "0 * * * *"
+
+
+  physical:
+    enabled: false
+    schedule: "0 * * * *"
+    retain: 5
+
+    s3:
+      bucket: zalando-backup
+      endpoint: http://10.0.1.4:32282
+      region: myminio
+      accessKey: admin
+      secretKey: admin12345
+      forcePathStyle: true
+
+
+pgadmin:
+  enabled: true
+
+pgadmin4:
+  image:
+    repository: dpage/pgadmin4
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  env:
+    email: admin@gmail.com
+    password: admin
+
+  service:
+    type: NodePort
+
+  persistence:
+    enabled: true
+    size: 1Gi
+
+  serverDefinitions:
+    enabled: true
+    resourceType: ConfigMap
+    existingConfigmap: pgadmin-servers
+

@@ -1,0 +1,87 @@
+apiVersion: acid.zalan.do/v1
+kind: postgresql
+metadata:
+  name: {{ .Values.postgres.name }}
+  namespace: {{ .Values.postgres.namespace }}
+spec:
+  teamId: {{ .Values.postgres.teamId }}
+
+  dockerImage: {{ .Values.postgres.image }}
+  numberOfInstances: {{ .Values.postgres.instances }}
+
+  volume:
+    size: {{ .Values.postgres.volumeSize }}
+
+  postgresql:
+    version: "{{ .Values.postgres.version }}"
+
+  # -----------------------------
+  # USERS
+  # -----------------------------
+  users:
+{{- range $user, $roles := .Values.postgres.users }}
+    {{ $user }}:
+{{- range $roles }}
+      - {{ . }}
+{{- end }}
+{{- end }}
+
+  # -----------------------------
+  # DATABASES
+  # -----------------------------
+  databases:
+{{- range $db, $owner := .Values.postgres.databases }}
+    {{ $db }}: {{ $owner }}
+{{- end }}
+
+  # -----------------------------
+  # CONNECTION POOLER
+  # -----------------------------
+  enableConnectionPooler: {{ .Values.pgbouncer.enabled }}
+
+  # -----------------------------
+  # LOGICAL BACKUP (Operator CronJob)
+  # -----------------------------
+  enableLogicalBackup: {{ .Values.backup.enabled }}
+{{- if .Values.backup.enabled }}
+  logicalBackupSchedule: "{{ .Values.backup.logicalSchedule }}"
+{{- end }}
+
+  # -----------------------------
+  # PHYSICAL BACKUP (WAL-G)
+  # IMPORTANT:
+  # Zalando expects env directly under spec.env
+  # -----------------------------
+{{- if .Values.backup.physical.enabled }}
+  env:
+    - name: USE_WALG_BACKUP
+      value: "true"
+
+    - name: BACKUP_SCHEDULE
+      value: "{{ .Values.backup.physical.schedule }}"
+
+    - name: BACKUP_NUM_TO_RETAIN
+      value: "{{ .Values.backup.physical.retain }}"
+
+    - name: WAL_S3_BUCKET
+      value: "{{ .Values.backup.physical.s3.bucket }}"
+
+    - name: AWS_ENDPOINT
+      value: "{{ .Values.backup.physical.s3.endpoint }}"
+
+    - name: AWS_REGION
+      value: "{{ .Values.backup.physical.s3.region }}"
+
+    - name: AWS_ACCESS_KEY_ID
+      value: "{{ .Values.backup.physical.s3.accessKey }}"
+
+    - name: AWS_SECRET_ACCESS_KEY
+      value: "{{ .Values.backup.physical.s3.secretKey }}"
+
+    - name: AWS_S3_FORCE_PATH_STYLE
+      value: "{{ .Values.backup.physical.s3.forcePathStyle | quote }}"
+
+    - name: WALG_DISABLE_S3_SSE
+      value: "true"
+{{- end }}
+

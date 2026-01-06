@@ -1,0 +1,23 @@
+{{- if .Values.pgadmin.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgadmin-servers
+  namespace: {{ .Values.postgres.namespace }}
+data:
+  servers.json: |
+    {
+      "Servers": {
+        "1": {
+          "Name": "{{ .Values.postgres.name }}",
+          "Group": "Servers",
+          "Host": "{{ .Values.postgres.name }}",
+          "Port": 5432,
+          "MaintenanceDB": "postgres",
+          "Username": "postgres",
+          "SSLMode": "require"
+        }
+      }
+    }
+{{- end }}
+
