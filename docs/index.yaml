@@ -3,17 +3,21 @@ entries:
   zalando-postgres:
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2026-01-06T11:19:19.26488083+05:30"
+    created: "2026-01-06T15:22:56.819103887+05:30"
     dependencies:
     - condition: pgadmin.enabled
       name: pgadmin4
       repository: https://helm.runix.net
       version: 1.*
+    - condition: operator.enabled
+      name: postgres-operator
+      repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+      version: 1.*
     description: Zalando Postgres Operator + PostgreSQL + PgBouncer + S3 backups
-    digest: f87b43ca290b37c991eafd62da2fc617f30dbbb0447d1fa45619bafb7d21d258
+    digest: 71a47a71c33bfa5c3209abcf402568a41cabc092353ada2f09c54836e5dc0b86
     name: zalando-postgres
     type: application
     urls:
     - https://durga-sirisha-karuturi.github.io/zalando-chart/zalando-postgres-0.1.0.tgz
     version: 0.1.0
-generated: "2026-01-06T11:19:19.262210002+05:30"
+generated: "2026-01-06T15:22:56.81409924+05:30"
