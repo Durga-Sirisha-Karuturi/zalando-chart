@@ -2,5 +2,8 @@ dependencies:
 - name: pgadmin4
   repository: https://helm.runix.net
   version: 1.50.0
-digest: sha256:d4e6bfe0fda0c8cda1d3a351adb1a07526e2453f7d0001463584631d7a37e096
-generated: "2026-01-06T11:16:28.110553852+05:30"
+- name: postgres-operator
+  repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+  version: 1.15.1
+digest: sha256:b7c3f29d85e9283eb571a0da3fa69b0c64839ddc5058ac87850ba865b0a26490
+generated: "2026-01-06T15:14:59.760083756+05:30"

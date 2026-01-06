@@ -42,6 +42,10 @@ backup:
 pgadmin:
   enabled: true
 
+operator:
+  enabled: false
+  namespace: zalando
+
 pgadmin4:
   image:
     repository: dpage/pgadmin4

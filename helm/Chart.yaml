@@ -11,8 +11,9 @@ dependencies:
     repository: https://helm.runix.net
     condition: pgadmin.enabled
 
-  #dependencies:
-  #- name: zalando
-  # repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
-  # version: "0.20.*"
+  - name: postgres-operator
+    version: "1.*"
+    repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+    condition: operator.enabled
+
 
