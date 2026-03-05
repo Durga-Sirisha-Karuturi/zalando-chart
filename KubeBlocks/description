@@ -5,3 +5,53 @@ helm repo add kubeblocks https://apecloud.github.io/helm-charts
 helm repo update
 
 helm install kubeblocks kubeblocks/kubeblocks --namespace kb-system --create-namespace --version=v1.0.2
+
+
+
+kubectl exec -it pg-restore-cluster-postgresql-0 -n demo -- psql -U postgres -c "SELECT version();"
+
+
+ON PUBLISHER:
+
+apiVersion: operations.kubeblocks.io/v1alpha1
+kind: OpsRequest
+metadata:
+  name: pg-enable-logical-replication
+  namespace: demo
+spec:
+  type: Reconfiguring
+  clusterName: pg-cluster
+  reconfigures:
+  - componentName: postgresql
+    parameters:
+    - key: wal_level
+      value: logical
+    - key: max_replication_slots
+      value: "10"
+    - key: max_wal_senders
+      value: "10"
+
+
+CREATE PUBLICATION all_tables FOR ALL TABLES;
+SELECT * FROM pg_publication;
+
+kbcli cluster create postgresql pg15-cluster \
+  --version "15.7.0" \
+  --storage 1 \
+  --memory 0.5 \
+  --cpu 0.5 \
+  --disable-exporter \
+  --replicas 2 \
+  -n demo
+
+ON SUBSCRIBER
+
+CREATE SUBSCRIPTION migrate
+CONNECTION 'host=pg-cluster-postgresql-postgresql.demo.svc.cluster.local port=5432 user=postgres password=<PASSWORD> dbname=postgres'
+PUBLICATION all_tables;
+
+SELECT * FROM pg_stat_subscription;
+SELECT * FROM pg_replication_slots;
+
+ALTER SUBSCRIPTION migrate DISABLE;
+DROP SUBSCRIPTION migrate;
