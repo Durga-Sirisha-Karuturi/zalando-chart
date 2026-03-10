@@ -1,1 +1,16 @@
+pg_dump → new cluster pg_restore
+
+kubectl exec -it pg-cluster-postgresql-0 -n demo -- bash
+
+pg_dumpall -U postgres -f /tmp/full_dump.sql
+pg_dump -U postgres -d mydb -Fc -f /tmp/mydb.dump
+
+kubectl cp demo/pg-cluster-postgresql-0:/tmp/full_dump.sql ./full_dump.sql
+
+Create a fresh cluster at the target major version
+
+kubectl cp ./full_dump.sql demo/pg-cluster-v16-postgresql-0:/tmp/full_dump.sql
+
+psql -U postgres -f /tmp/full_dump.sql
+pg_restore -U postgres -d mydb -Fc /tmp/mydb.dump
 
