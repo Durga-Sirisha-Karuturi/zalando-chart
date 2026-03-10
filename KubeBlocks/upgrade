@@ -2,7 +2,7 @@ pg_dump → new cluster pg_restore
 
 kubectl exec -it pg-cluster-postgresql-0 -n demo -- bash
 
-pg_dumpall -U postgres -f /tmp/full_dump.sql
+pg_dumpall -U postgres -f /tmp/full_dump.sql (dumps (exports) the entire PostgreSQL server into a SQL script file.)
 pg_dump -U postgres -d mydb -Fc -f /tmp/mydb.dump
 
 kubectl cp demo/pg-cluster-postgresql-0:/tmp/full_dump.sql ./full_dump.sql
